@@ -1,0 +1,12 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="KeyVault_API:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/KeyVault_API_jar</output-path>
+    <root id="archive" name="KeyVault_API.jar">
+      <element id="module-output" name="KeyVault_API" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/github/jai-imageio/jai-imageio-core/1.4.0/jai-imageio-core-1.4.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/beust/jcommander/1.82/jcommander-1.82.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/google/zxing/javase/3.5.1/javase-3.5.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/google/zxing/core/3.5.1/core-3.5.1.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
