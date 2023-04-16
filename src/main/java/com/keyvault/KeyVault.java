@@ -6,10 +6,8 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.keyvault.entities.*;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+
+import java.io.*;
 import java.net.*;
 import java.sql.Timestamp;
 import java.util.Map;
@@ -18,10 +16,13 @@ public class KeyVault {
 
     private ObjectInputStream in;
     private ObjectOutputStream out;
+    private BufferedOutputStream bos;
+    private BufferedInputStream bis;
     private Socket socket;
     private Object[] responseContent;
 
     private Tokens userToken;
+    private boolean localhost = false;
 
     private final Map<Integer, String> serverMessages = Map.of(
             101, "Credenciales incorrectas",
@@ -38,10 +39,17 @@ public class KeyVault {
 
     }
 
+    public KeyVault(boolean localhost){
+        this.localhost = localhost;
+    }
+
     private void connect() throws IOException {
-        socket = new Socket("localhost", 5556);
-        out = new ObjectOutputStream(socket.getOutputStream());
-        in = new ObjectInputStream(socket.getInputStream());
+        socket = new Socket(localhost ? "localhost" : "129.151.227.217", 5556);
+        bos = new BufferedOutputStream(socket.getOutputStream());
+        out = new ObjectOutputStream(bos);
+        out.flush();
+        bis = new BufferedInputStream(socket.getInputStream());
+        in = new ObjectInputStream(bis);
     }
 
     private void disconnect(){
@@ -108,6 +116,7 @@ public class KeyVault {
     public int getItems(){
         return serverOperation(new Request(Request.GET, userToken));
     }
+    public int getDevices() { return serverOperation(new Request(Request.GET_DEVICES, userToken)); }
 
     public int modItem(Items item){
         return serverOperation(new Request(new Object[]{item},Request.MOD, userToken));
@@ -151,6 +160,8 @@ public class KeyVault {
     private Response sendRequest(Request request) throws IOException, ClassNotFoundException {
         out.writeObject(request);
         out.flush();
+        out.reset();
+        bos.flush();
 
         Response response = (Response) in.readObject();
         responseContent = response.getResponseContent();
@@ -248,6 +259,7 @@ public class KeyVault {
         item.setModification(new Timestamp(System.currentTimeMillis()));
         item.setFav((byte) 0);
         item.setUsersByIdUi(userToken.getUsersByIdTu());
+        item.setIdUi(userToken.getUsersByIdTu().getIdU());
 
         return item;
     }
