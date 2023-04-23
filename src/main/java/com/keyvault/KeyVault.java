@@ -221,6 +221,7 @@ public class KeyVault {
 
             Devices device = new Devices();
             device.setMac(sb.toString());
+            device.setAgent(System.getProperty("os.name"));
 
             return device;
         }catch (SocketException | UnknownHostException e){

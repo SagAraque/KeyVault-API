@@ -2,6 +2,7 @@ package com.keyvault.entities;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Objects;
 
 
@@ -16,10 +17,37 @@ public class Devices implements Serializable {
     private String mac;
 
     private String ip;
+    private String location;
+    private String agent;
+    private Date lastLogin;
 
     private byte stateD = 1;
 
     private Users user;
+
+    public Date getLastLogin() {
+        return lastLogin;
+    }
+
+    public void setLastLogin(Date lastLogin) {
+        this.lastLogin = lastLogin;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getAgent() {
+        return agent;
+    }
+
+    public void setAgent(String agent) {
+        this.agent = agent;
+    }
 
     public Integer getIdD() {
         return idD;
