@@ -6,3 +6,8 @@
 target/classes/com/keyvault/KeyVault.class
 target/classes/com/keyvault/Request.class
 target/classes/com/keyvault/Response.class
+.idea/artifacts/KeyVault_API_jar.xml
+.idea/misc.xml
+target/test-classes/Test.class
+target/classes/com/keyvault/Response.class
+target/classes/com/keyvault/Request.class
