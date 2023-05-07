@@ -1,0 +1,8 @@
+
+.idea/artifacts/KeyVault_API_jar.xml
+.idea/artifacts/KeyVault_API_jar.xml
+.idea/libraries/SecureSocket.xml
+.idea/misc.xml
+target/classes/com/keyvault/KeyVault.class
+target/classes/com/keyvault/Request.class
+target/classes/com/keyvault/Response.class
