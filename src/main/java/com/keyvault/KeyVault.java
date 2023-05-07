@@ -259,7 +259,7 @@ public class KeyVault {
         item.setName(itemName);
         item.setObservations(itemObservation);
         item.setModification(new Timestamp(System.currentTimeMillis()));
-        item.setFav((byte) 0);
+        item.setFav(false);
         item.setUsersByIdUi(userToken.getUsersByIdTu());
         item.setIdUi(userToken.getUsersByIdTu().getIdU());
 
