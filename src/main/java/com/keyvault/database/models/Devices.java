@@ -1,10 +1,9 @@
-package com.keyvault.entities;
+package com.keyvault.database.models;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
-
 
 public class Devices implements Serializable {
     @Serial
@@ -21,7 +20,7 @@ public class Devices implements Serializable {
     private String agent;
     private Date lastLogin;
 
-    private byte stateD = 1;
+    private boolean stateD = true;
 
     private Users user;
 
@@ -81,11 +80,11 @@ public class Devices implements Serializable {
         this.ip = ip;
     }
 
-    public byte getStateD() {
+    public boolean getStateD() {
         return stateD;
     }
 
-    public void setStateD(byte stateD) {
+    public void setStateD(boolean stateD) {
         this.stateD = stateD;
     }
 

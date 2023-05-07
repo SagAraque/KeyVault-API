@@ -1,10 +1,9 @@
-package com.keyvault.entities;
+package com.keyvault.database.models;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Objects;
-
 
 public class Items implements Serializable {
     @Serial
@@ -14,7 +13,7 @@ public class Items implements Serializable {
     private String name;
     private String observations;
     private Timestamp modification;
-    private byte fav;
+    private boolean fav;
     private Users usersByIdUi;
     private Notes notesByIdI;
     private Passwords passwordsByIdI;
@@ -59,11 +58,11 @@ public class Items implements Serializable {
         this.modification = modification;
     }
 
-    public byte getFav() {
+    public boolean getFav() {
         return fav;
     }
 
-    public void setFav(byte fav) {
+    public void setFav(boolean fav) {
         this.fav = fav;
     }
 

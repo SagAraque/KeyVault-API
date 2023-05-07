@@ -1,4 +1,4 @@
-package com.keyvault.entities;
+package com.keyvault.database.models;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -12,7 +12,7 @@ public class Tokens implements Serializable {
     private Integer idTu;
     private String value;
     private Timestamp date;
-    private byte state = 1;
+    private boolean state = true;
     private Users usersByIdTu;
 
     public Integer getIdT() {
@@ -47,11 +47,11 @@ public class Tokens implements Serializable {
         this.date = date;
     }
 
-    public byte getState() {
+    public boolean getState() {
         return state;
     }
 
-    public void setState(byte state) {
+    public void setState(boolean state) {
         this.state = state;
     }
 

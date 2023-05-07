@@ -1,9 +1,8 @@
-package com.keyvault.entities;
+package com.keyvault.database.models;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
-
 
 public class Users implements Serializable {
     @Serial
@@ -11,7 +10,7 @@ public class Users implements Serializable {
     private Integer idU;
     private String emailU;
     private String passU;
-    private byte stateU = 1;
+    private boolean stateU = true;
     private boolean has2fa;
     public Integer getIdU() {
         return idU;
@@ -37,11 +36,11 @@ public class Users implements Serializable {
         this.passU = passU;
     }
 
-    public byte getStateU() {
+    public boolean getStateU() {
         return stateU;
     }
 
-    public void setStateU(byte stateU) {
+    public void setStateU(boolean stateU) {
         this.stateU = stateU;
     }
 
