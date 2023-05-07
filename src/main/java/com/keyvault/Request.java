@@ -1,6 +1,8 @@
 package com.keyvault;
 
+import com.keyvault.database.models.Devices;
 import com.keyvault.database.models.Tokens;
+import com.keyvault.database.models.Users;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -20,30 +22,33 @@ public class Request implements Serializable {
     public static String REGISTER = "REGISTER";
     public static String CLEAR_DEVICE = "CLEAR-DEVICE";
     public static String TOTP = "TOTP";
-    private final Object[] object;
-    private final String operationCode;
-    private final Tokens token;
+    private Users user = null;
+    private Devices device = null;
+    private String operationCode = null;
+    private Object content = null;
+    private Tokens token = null;
 
-    public Request(Object[] object, String operationCode, Tokens token){
-        this.object = object;
+    public Request(Object responseContent, String operationCode, Tokens token){
+        this.content = responseContent;
         this.operationCode = operationCode;
         this.token = token;
+    }
+
+    public Request(Users user, Devices device, String operationCode){
+        this.user = user;
+        this.device = device;
+        this.operationCode = operationCode;
     }
 
     public Request(String operationCode, Tokens token){
-        this.object = null;
         this.operationCode = operationCode;
         this.token = token;
     }
 
-    public Request(Object[] object, String operationCode){
-        this.object = object;
-        this.operationCode = operationCode;
-        this.token = null;
-    }
+    public Request(){}
 
-    public Object[] getContent() {
-        return object;
+    public Object getContent() {
+        return content;
     }
 
     public String getOperationCode() {
@@ -51,4 +56,24 @@ public class Request implements Serializable {
     }
 
     public Tokens getToken(){ return token; }
+
+    public Users getUser() {
+        return user;
+    }
+
+    public void setUser(Users user) {
+        this.user = user;
+    }
+
+    public Devices getDevice() {
+        return device;
+    }
+
+    public void setDevice(Devices device) {
+        this.device = device;
+    }
+
+    public void setContent(Object content) {
+        this.content = content;
+    }
 }
