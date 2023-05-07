@@ -5,11 +5,12 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
-import com.keyvault.entities.*;
-
-import java.io.*;
-import java.net.*;
+import com.google.zxing.qrcode.QRCodeWriter;
 import com.keyvault.database.models.*;
+
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -141,6 +142,8 @@ public class KeyVault {
         return serverOperation(new Request(Request.DELETE_USER, userToken));
     }
 
+    public int verifyTOTP(String code){ return serverOperation(new Request(Request.VERIFY_TOTP, userToken));}
+
     private int serverOperation(Request request){
         try{
             connect();
@@ -151,7 +154,8 @@ public class KeyVault {
 
             return response.getResponseCode();
 
-        }catch (IOException | ClassNotFoundException e){
+        }catch (Exception e){
+            e.printStackTrace();
             return 202;
         }
     }
@@ -172,16 +176,15 @@ public class KeyVault {
         return response;
     }
 
-    public int generateQR(String qr){
+    public BufferedImage generateQR(String qr){
         try{
+            QRCodeWriter writer = new QRCodeWriter();
             BitMatrix matrix = new MultiFormatWriter().encode(qr, BarcodeFormat.QR_CODE, 40, 40);
-            FileOutputStream out = new FileOutputStream("qr.png");
-            MatrixToImageWriter.writeToStream(matrix, "png", out);
 
-            return 200;
-        }catch (WriterException | IOException e){
+            return MatrixToImageWriter.toBufferedImage(matrix);
+        }catch (WriterException e){
             e.printStackTrace();
-            return 202;
+            return null;
         }
 
     }
