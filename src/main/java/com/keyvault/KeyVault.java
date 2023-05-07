@@ -20,8 +20,8 @@ public class KeyVault {
     private BufferedOutputStream bos;
     private BufferedInputStream bis;
     private Socket socket;
-    private Object[] responseContent;
 
+    private Object responseContent;
     private Tokens userToken;
     private boolean localhost = false;
 
@@ -68,10 +68,9 @@ public class KeyVault {
         try {
 
             connect();
-            Response response = sendRequest(new Request(new Object[]{user, createDevice()}, Request.LOGIN));
+            Response response = sendRequest(new Request(user, createDevice(), Request.LOGIN));
 
             if(response.getResponseCode() == 200){
-                userToken = (Tokens) response.getResponseContent()[0];
                 disconnect();
             }
 
@@ -88,7 +87,7 @@ public class KeyVault {
         try {
             connect();
 
-            Response response = sendRequest(new Request(new Object[]{user, createDevice()}, Request.VERIFY));
+            Response response = sendRequest(new Request(user, createDevice(), Request.VERIFY));
 
             if(response.getResponseCode() == 102){
                 out.writeUTF(code + "::" + (saveDevice ? 1 : 0));
@@ -97,8 +96,8 @@ public class KeyVault {
                 response = (Response) in.readObject();
 
                 if(response.getResponseCode() == 200)
-                    userToken = (Tokens) response.getResponseContent()[0];
 
+                        userToken = (Tokens) response.getResponseContent();
             }
 
             disconnect();
@@ -111,7 +110,7 @@ public class KeyVault {
     }
 
     public int register(Users user){
-        return serverOperation(new Request(new Object[]{user, createDevice()}, Request.REGISTER));
+        return serverOperation(new Request(user, createDevice(), Request.REGISTER));
     }
 
     public int getItems(){
@@ -120,15 +119,15 @@ public class KeyVault {
     public int getDevices() { return serverOperation(new Request(Request.GET_DEVICES, userToken)); }
 
     public int modItem(Items item){
-        return serverOperation(new Request(new Object[]{item},Request.MOD, userToken));
+        return serverOperation(new Request(item, Request.MOD, userToken));
     }
 
     public int insertItem(Items item){
-        return serverOperation(new Request(new Object[]{item},Request.INSERT, userToken));
+        return serverOperation(new Request(item,Request.INSERT, userToken));
     }
 
     public int deleteItem(Items item){
-        return serverOperation(new Request(new Object[]{item},Request.DELETE, userToken));
+        return serverOperation(new Request(item,Request.DELETE, userToken));
     }
 
     public int totp(){
@@ -184,8 +183,8 @@ public class KeyVault {
 
     }
 
-    public Object[] getResponseContent(){
-        Object[] object = responseContent;
+    public Object getResponseContent(){
+        Object object = responseContent;
         responseContent = null;
 
         return object;
