@@ -10,17 +10,17 @@ import com.keyvault.entities.*;
 import java.io.*;
 import java.net.*;
 import com.keyvault.database.models.*;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.sql.Timestamp;
 import java.util.Map;
 
 public class KeyVault {
 
-    private ObjectInputStream in;
-    private ObjectOutputStream out;
-    private BufferedOutputStream bos;
-    private BufferedInputStream bis;
-    private Socket socket;
-
+    private SecureSocket secureSocket;
     private Object responseContent;
     private Tokens userToken;
     private boolean localhost = false;
@@ -45,19 +45,12 @@ public class KeyVault {
     }
 
     private void connect() throws IOException {
-        socket = new Socket(localhost ? "localhost" : "129.151.227.217", 5556);
-        bos = new BufferedOutputStream(socket.getOutputStream());
-        out = new ObjectOutputStream(bos);
-        out.flush();
-        bis = new BufferedInputStream(socket.getInputStream());
-        in = new ObjectInputStream(bis);
+        secureSocket = new SecureSocket(localhost ? "localhost" : "129.151.227.217", 5556);
     }
 
     private void disconnect(){
         try {
-            in.close();
-            out.close();
-            socket.close();
+            secureSocket.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -66,11 +59,11 @@ public class KeyVault {
 
     public int login(Users user){
         try {
-
             connect();
             Response response = sendRequest(new Request(user, createDevice(), Request.LOGIN));
 
             if(response.getResponseCode() == 200){
+                userToken = (Tokens) response.getResponseContent();
                 disconnect();
             }
 
@@ -78,7 +71,8 @@ public class KeyVault {
 
             return response.getResponseCode();
 
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (Exception e) {
+            e.printStackTrace();
             return 202;
         }
     }
@@ -90,21 +84,26 @@ public class KeyVault {
             Response response = sendRequest(new Request(user, createDevice(), Request.VERIFY));
 
             if(response.getResponseCode() == 102){
-                out.writeUTF(code + "::" + (saveDevice ? 1 : 0));
-                out.flush();
+                secureSocket.writeUTF(code + "::" + (saveDevice ? 1 : 0));
 
-                response = (Response) in.readObject();
+                response = (Response) secureSocket.readObject();
 
-                if(response.getResponseCode() == 200)
-
+                if(response != null)
+                {
+                    if( response.getResponseCode() == 200)
                         userToken = (Tokens) response.getResponseContent();
+                }
+                else
+                {
+                    response = new Response(202);
+                }
             }
 
             disconnect();
 
             return response.getResponseCode();
 
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (Exception e) {
             return 202;
         }
     }
@@ -157,14 +156,18 @@ public class KeyVault {
         }
     }
 
-    private Response sendRequest(Request request) throws IOException, ClassNotFoundException {
-        out.writeObject(request);
-        out.flush();
-        out.reset();
-        bos.flush();
+    private Response sendRequest(Request request) throws Exception {
+        secureSocket.writeObject(request);
+        Response response = (Response) secureSocket.readObject();
 
-        Response response = (Response) in.readObject();
-        responseContent = response.getResponseContent();
+        if(response != null)
+        {
+            responseContent = response.getResponseContent();
+        }
+        else
+        {
+            response = new Response(202);
+        }
 
         return response;
     }
@@ -188,11 +191,6 @@ public class KeyVault {
         responseContent = null;
 
         return object;
-    }
-
-    public void forceDisconnect(){
-        if (socket != null && !socket.isConnected() && socket.isClosed())
-            disconnect();
     }
 
     public Tokens getToken(){ return userToken; }
