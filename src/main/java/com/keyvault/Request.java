@@ -22,6 +22,7 @@ public class Request implements Serializable {
     public static String REGISTER = "REGISTER";
     public static String CLEAR_DEVICE = "CLEAR-DEVICE";
     public static String TOTP = "TOTP";
+    public static String VERIFY_TOTP = "VERIFY-TOTP";
     private Users user = null;
     private Devices device = null;
     private String operationCode = null;
