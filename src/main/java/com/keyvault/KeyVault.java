@@ -9,8 +9,6 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import com.keyvault.database.models.*;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -142,7 +140,7 @@ public class KeyVault {
         return serverOperation(new Request(Request.DELETE_USER, userToken));
     }
 
-    public int verifyTOTP(String code){ return serverOperation(new Request(Request.VERIFY_TOTP, userToken));}
+    public int verifyTOTP(String code){ return serverOperation(new Request(code, Request.VERIFY_TOTP, userToken));}
 
     private int serverOperation(Request request){
         try{
@@ -179,7 +177,7 @@ public class KeyVault {
     public BufferedImage generateQR(String qr){
         try{
             QRCodeWriter writer = new QRCodeWriter();
-            BitMatrix matrix = new MultiFormatWriter().encode(qr, BarcodeFormat.QR_CODE, 40, 40);
+            BitMatrix matrix = new MultiFormatWriter().encode(qr, BarcodeFormat.QR_CODE, 300, 300);
 
             return MatrixToImageWriter.toBufferedImage(matrix);
         }catch (WriterException e){
