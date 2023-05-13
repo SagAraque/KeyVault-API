@@ -197,6 +197,11 @@ public class KeyVault {
     public Tokens getToken(){ return userToken; }
     public String getResponseMessage(int code){ return serverMessages.get(code); }
 
+    public Users getAuthUser()
+    {
+        return userToken != null ? userToken.getUsersByIdTu() : null;
+    }
+
     public Users createUser(String email, String password){
         Users user = new Users();
         user.setEmailU(email);
