@@ -11,7 +11,7 @@ public class Users implements Serializable {
     private String emailU;
     private String passU;
     private boolean stateU = true;
-    private boolean has2fa;
+    private boolean totpverified;
     public Integer getIdU() {
         return idU;
     }
@@ -44,9 +44,9 @@ public class Users implements Serializable {
         this.stateU = stateU;
     }
 
-    public Boolean getHas2fa() {return has2fa;}
+    public Boolean isTotpverified() {return totpverified;}
 
-    public void setHas2fa(Boolean has2fa) {this.has2fa = has2fa;}
+    public void setTotpverified(Boolean totpverified) {this.totpverified = totpverified;}
 
     @Override
     public boolean equals(Object o) {
