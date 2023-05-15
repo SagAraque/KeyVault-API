@@ -21,7 +21,7 @@ public class KeyVault {
 
     private SecureSocket secureSocket;
     private Object responseContent;
-    private Tokens userToken;
+    private SessionToken userToken;
     private boolean localhost = false;
 
     private final Map<Integer, String> serverMessages = Map.of(
@@ -62,7 +62,7 @@ public class KeyVault {
             Response response = sendRequest(new Request(user, createDevice(), Request.LOGIN));
 
             if(response.getResponseCode() == 200){
-                userToken = (Tokens) response.getResponseContent();
+                userToken = (SessionToken) response.getResponseContent();
                 disconnect();
             }
 
@@ -90,7 +90,7 @@ public class KeyVault {
                 if(response != null)
                 {
                     if( response.getResponseCode() == 200)
-                        userToken = (Tokens) response.getResponseContent();
+                        userToken = (SessionToken) response.getResponseContent();
                 }
                 else
                 {
@@ -194,12 +194,12 @@ public class KeyVault {
         return object;
     }
 
-    public Tokens getToken(){ return userToken; }
+    public SessionToken getToken(){ return userToken; }
     public String getResponseMessage(int code){ return serverMessages.get(code); }
 
     public Users getAuthUser()
     {
-        return userToken != null ? userToken.getUsersByIdTu() : null;
+        return userToken != null ? userToken.getUser() : null;
     }
 
     public Users createUser(String email, String password){
@@ -263,8 +263,8 @@ public class KeyVault {
         item.setObservations(itemObservation);
         item.setModification(new Timestamp(System.currentTimeMillis()));
         item.setFav(false);
-        item.setUsersByIdUi(userToken.getUsersByIdTu());
-        item.setIdUi(userToken.getUsersByIdTu().getIdU());
+        item.setUsersByIdUi(userToken.getUser());
+        item.setIdUi(userToken.getUser().getIdU());
 
         return item;
     }
