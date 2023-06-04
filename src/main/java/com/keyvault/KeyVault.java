@@ -5,35 +5,25 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.QRCodeWriter;
 import com.keyvault.database.models.*;
-
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.sql.Timestamp;
-import java.util.Map;
-
 public class KeyVault {
 
     private SecureSocket secureSocket;
     private Object responseContent;
     private SessionToken userToken;
     private boolean localhost = false;
-
-    private final Map<Integer, String> serverMessages = Map.of(
-            101, "Credenciales incorrectas",
-            102, "Error de verificación",
-            103, "Verificación fallida",
-            104, "Credenciales ya registradas",
-            200, "Operación correcta",
-            201, "Token no válido",
-            202, "Error en servidor",
-            203, "Operación no soportada"
-    );
 
     public KeyVault(){
 
@@ -56,7 +46,8 @@ public class KeyVault {
 
     }
 
-    public int login(Users user){
+    public int login(Users user)
+    {
         try {
             connect();
             Response response = sendRequest(new Request(user, createDevice(), Request.LOGIN));
@@ -66,18 +57,23 @@ public class KeyVault {
                 disconnect();
             }
 
-            disconnect();
-
             return response.getResponseCode();
 
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             e.printStackTrace();
             return 202;
+        }
+        finally
+        {
+            disconnect();
         }
     }
 
     public int verifyLogin(String code, boolean saveDevice, Users user){
-        try {
+        try
+        {
             connect();
 
             Response response = sendRequest(new Request(user, createDevice(), Request.VERIFY));
@@ -98,12 +94,16 @@ public class KeyVault {
                 }
             }
 
-            disconnect();
-
             return response.getResponseCode();
 
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             return 202;
+        }
+        finally
+        {
+            disconnect();
         }
     }
 
@@ -148,13 +148,72 @@ public class KeyVault {
 
             Response response = sendRequest(request);
 
-            disconnect();
-
             return response.getResponseCode();
 
         }catch (Exception e){
             e.printStackTrace();
             return 202;
+        }
+        finally
+        {
+            disconnect();
+        }
+    }
+
+    public int sendImage(File image, String path, String name)
+    {
+        try
+        {
+            connect();
+
+            BufferedImage bf = ImageIO.read(image);
+            Image result = bf.getScaledInstance(60, 60, Image.SCALE_DEFAULT);
+            BufferedImage resized = new BufferedImage(60, 60, BufferedImage.TYPE_INT_RGB);
+            resized.getGraphics().drawImage(result, 0, 0, null);
+
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            ImageIO.write(resized, "png", byteArrayOutputStream);
+
+            byte[] imageBytes = byteArrayOutputStream.toByteArray();
+
+            Response response = sendRequest(new Request(imageBytes, Request.PROFILE_IMAGE, userToken));
+
+            if(response.getResponseCode() == 200)
+            {
+                File output = new File(path + name + ".png");
+                ImageIO.write(resized, "png", output);
+            }
+
+            return response.getResponseCode();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return 202;
+        }
+        finally
+        {
+            disconnect();
+        }
+    }
+
+    public int getImage()
+    {
+        try
+        {
+            connect();
+            Response response = sendRequest(new Request(Request.GET_PROFILE_IMAGE, userToken));
+
+            return response.getResponseCode();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return 202;
+        }
+        finally
+        {
+            disconnect();
         }
     }
 
@@ -176,7 +235,6 @@ public class KeyVault {
 
     public BufferedImage generateQR(String qr){
         try{
-            QRCodeWriter writer = new QRCodeWriter();
             BitMatrix matrix = new MultiFormatWriter().encode(qr, BarcodeFormat.QR_CODE, 300, 300);
 
             return MatrixToImageWriter.toBufferedImage(matrix);
@@ -195,7 +253,6 @@ public class KeyVault {
     }
 
     public SessionToken getToken(){ return userToken; }
-    public String getResponseMessage(int code){ return serverMessages.get(code); }
 
     public Users getAuthUser()
     {
@@ -259,12 +316,14 @@ public class KeyVault {
 
     private Items createItem(String itemName, String itemObservation){
         Items item = new Items();
+        Color color = Color.getHSBColor((float) (Math.random() * 360), 0.7F, 0.6F);
         item.setName(itemName);
         item.setObservations(itemObservation);
         item.setModification(new Timestamp(System.currentTimeMillis()));
         item.setFav(false);
         item.setUsersByIdUi(userToken.getUser());
         item.setIdUi(userToken.getUser().getIdU());
+        item.setColor("#" + Integer.toHexString(color.getRGB()).substring(2));
 
         return item;
     }

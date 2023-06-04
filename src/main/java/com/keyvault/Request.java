@@ -23,6 +23,8 @@ public class Request implements Serializable {
     public static String CLEAR_DEVICE = "CLEAR-DEVICE";
     public static String TOTP = "TOTP";
     public static String VERIFY_TOTP = "VERIFY-TOTP";
+    public static String PROFILE_IMAGE = "PROFILE-IMAGE";
+    public static String GET_PROFILE_IMAGE = "GET-PROFILE-IMAGE";
     private Users user = null;
     private Devices device = null;
     private String operationCode = null;
