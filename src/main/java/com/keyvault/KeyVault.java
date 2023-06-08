@@ -12,12 +12,11 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.sql.Timestamp;
+import java.util.Enumeration;
+
 public class KeyVault {
 
     private SecureSocket secureSocket;
@@ -269,15 +268,19 @@ public class KeyVault {
 
     private Devices createDevice() {
         try{
-            InetAddress localHost = InetAddress.getLocalHost();
-            NetworkInterface ni = NetworkInterface.getByInetAddress(localHost);
-            byte[] hardwareAddress = ni.getHardwareAddress();
+            Enumeration<NetworkInterface> networks = NetworkInterface.getNetworkInterfaces();
             StringBuilder sb = new StringBuilder();
 
-            for (int i = 0; i < hardwareAddress.length; i++) {
-                sb.append(String.format(
-                        "%02X%s", hardwareAddress[i],
-                        (i < hardwareAddress.length - 1) ? "-" : ""));
+            while (networks.hasMoreElements()) {
+                NetworkInterface network = networks.nextElement();
+                byte[] mac = network.getHardwareAddress();
+
+                if (mac != null) {
+                    for (int i = 0; i < mac.length; i++)
+                        sb.append(String.format("%02X%s", mac[i],(i < mac.length - 1) ? "-": ""));
+
+                    break;
+                }
             }
 
             Devices device = new Devices();
@@ -285,7 +288,7 @@ public class KeyVault {
             device.setAgent(System.getProperty("os.name"));
 
             return device;
-        }catch (SocketException | UnknownHostException e){
+        }catch (SocketException e){
             return null;
         }
     }
