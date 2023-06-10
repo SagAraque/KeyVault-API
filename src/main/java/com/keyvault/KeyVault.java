@@ -128,7 +128,12 @@ public class KeyVault {
     }
 
     public int totp(){
-        return serverOperation(new Request(Request.TOTP, userToken));
+        int response = serverOperation(new Request(Request.TOTP, userToken));
+
+        if(response == 200)
+            getAuthUser().setTotpverified(!getAuthUser().isTotpverified());
+
+        return response;
     }
 
     public int clearDevices(){
@@ -139,7 +144,14 @@ public class KeyVault {
         return serverOperation(new Request(Request.DELETE_USER, userToken));
     }
 
-    public int verifyTOTP(String code){ return serverOperation(new Request(code, Request.VERIFY_TOTP, userToken));}
+    public int verifyTOTP(String code){
+        int response = serverOperation(new Request(code, Request.VERIFY_TOTP, userToken));
+
+        if(response == 200)
+            getAuthUser().setTotpverified(true);
+
+        return response;
+    }
 
     private int serverOperation(Request request){
         try{
