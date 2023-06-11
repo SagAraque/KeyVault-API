@@ -8,58 +8,42 @@ import java.util.Objects;
 public class Devices implements Serializable {
     @Serial
     private static final long serialVersionUID = 6529685098267757691L;
-
     private Integer idD;
-
     private Integer idUd;
-
     private String mac;
-
     private String ip;
     private String location;
     private String agent;
     private Date lastLogin;
-
     private boolean stateD = true;
-
     private Users user;
-
     public Date getLastLogin() {
         return lastLogin;
     }
-
     public void setLastLogin(Date lastLogin) {
         this.lastLogin = lastLogin;
     }
-
     public String getLocation() {
         return location;
     }
-
     public void setLocation(String location) {
         this.location = location;
     }
-
     public String getAgent() {
         return agent;
     }
-
     public void setAgent(String agent) {
         this.agent = agent;
     }
-
     public Integer getIdD() {
         return idD;
     }
-
     public void setIdD(Integer idD) {
         this.idD = idD;
     }
-
     public Integer getIdUd(Integer idU) {
         return idUd;
     }
-
     public void setIdUd(Integer idUd) {
         this.idUd = idUd;
     }

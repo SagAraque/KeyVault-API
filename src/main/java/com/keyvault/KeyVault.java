@@ -175,8 +175,6 @@ public class KeyVault {
     {
         try
         {
-            connect();
-
             BufferedImage bf = ImageIO.read(image);
             Image result = bf.getScaledInstance(60, 60, Image.SCALE_DEFAULT);
             BufferedImage resized = new BufferedImage(60, 60, BufferedImage.TYPE_INT_RGB);
@@ -186,6 +184,8 @@ public class KeyVault {
             ImageIO.write(resized, "png", byteArrayOutputStream);
 
             byte[] imageBytes = byteArrayOutputStream.toByteArray();
+
+            connect();
 
             Response response = sendRequest(new Request(imageBytes, Request.PROFILE_IMAGE, userToken));
 
@@ -233,13 +233,9 @@ public class KeyVault {
         Response response = (Response) secureSocket.readObject();
 
         if(response != null)
-        {
             responseContent = response.getResponseContent();
-        }
         else
-        {
             response = new Response(202);
-        }
 
         return response;
     }
